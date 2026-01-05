@@ -1,0 +1,38 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Ejercicios de Árboles en Pascal
+message: >-
+  Estructuras de Datos. Grado en Ingeniería
+  del Software. Universidad Rey Juan Carlos. 
+type: software
+authors:
+  - given-names: 'Sergio '
+    family-names: Cavero
+    email: sergio.cavero@urjc.es
+    affiliation: Universidad Rey Juan Carlos
+    orcid: 'https://orcid.org/0000-0002-5258-5915'
+  - given-names: Salvador
+    family-names: 'Sanchez-Alonso '
+    orcid: 'https://orcid.org/0000-0002-9949-4797'
+    affiliation: Universidad Rey Juan Carlos
+    email: salvador.sanchez@urjc.es
+repository-code: >-
+ https://github.com/TeachingHub/ED-Lab07-Arboles-Template/
+abstract: >-
+  Enunciados de ejercicios de árboles en Pascal en
+  distintos grados de dificultad. Desde problemas más
+  sencillos para conocer el funcionamiento de un árbol, 
+  pasando por ejercicios en los que hay que modificar ligeramente 
+  el árbol, hasta problemas que requieren la implementación de
+  algoritmos de búsqueda y recorrido.
+keywords:
+  - pascal
+  - data-estructures
+  - pointers
+  - teaching
+  - trees
+  - binary-trees
+  - algorithms
+license: MIT
