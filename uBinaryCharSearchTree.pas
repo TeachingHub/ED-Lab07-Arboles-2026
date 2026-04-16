@@ -97,7 +97,7 @@ begin
         if a^.hi = aux then
           a^.hi := aux^.hi
         else
-          ant^.hd := NIL;
+          ant^.hd := aux^.hi;
         a^.info := aux^.info;
       end;
       dispose(aux);
