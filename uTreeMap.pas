@@ -9,18 +9,17 @@ type
     hi, hd: tTreeMap;
   end;
 
-  // Basic methods
+  // Métodos básicos
   procedure initialize(var a: tTreeMap);
-  function is_empty(a: tTreeMap): boolean;
   procedure add(var a: tTreeMap; value: string);
   procedure get(a: tTreeMap; key: integer; var value: tListaSimple);
   function contains(a: tTreeMap; key: integer): boolean;
-  procedure remove(var a: tTreeMap; x: integer);
-  procedure remove_value(var a: tTreeMap; x: integer; value: string);
-
-  // Traversal algorithms
-  procedure preorder(a: tTreeMap);
+  procedure remove(var a: tTreeMap; key: integer);
+  procedure remove_value(var a: tTreeMap; value: string);
+  function is_empty(a: tTreeMap): boolean;
+  // Métodos de recorrido
   procedure inorder(a: tTreeMap);
+  procedure preorder(a: tTreeMap);
   procedure postorder(a: tTreeMap);
 
   // Other methods
