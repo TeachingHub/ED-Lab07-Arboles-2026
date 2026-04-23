@@ -12,7 +12,7 @@ type
   // Basic methods
   procedure initialize(var a: tTreeMap);
   function is_empty(a: tTreeMap): boolean;
-  procedure add(var a: tTreeMap; key: integer; value: string);
+  procedure add(var a: tTreeMap; value: string);
   procedure get(a: tTreeMap; key: integer; var value: tListaSimple);
   function contains(a: tTreeMap; key: integer): boolean;
   procedure remove(var a: tTreeMap; x: integer);
