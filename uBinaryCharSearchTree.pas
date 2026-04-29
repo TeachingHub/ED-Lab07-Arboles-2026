@@ -2,21 +2,22 @@ unit uBinaryCharSearchTree;
 
 interface
 
+uses
+  uPilaChar;
+
 type
   tBinarySearchTree = ^tnode;
   tnode = record
-    info: integer;
+    info: char;
     hi, hd: tBinarySearchTree;
   end;
 
   // Basic methods
   procedure initialize(var a: tBinarySearchTree);
   function is_empty(a: tBinarySearchTree): boolean;
-  procedure add(var a: tBinarySearchTree; clave: integer);
-  function in_tree(a: tBinarySearchTree; clave: integer): boolean;
-  procedure remove(var a: tBinarySearchTree; x: integer);
-
-
+  procedure add(var a: tBinarySearchTree; clave: char);
+  function in_tree(a: tBinarySearchTree; clave: char): boolean;
+  procedure remove(var a: tBinarySearchTree; x: char);
 
   // Traversal algorithms
   procedure preorder(a: tBinarySearchTree);
@@ -26,6 +27,7 @@ type
   // Other methods
   procedure get_hi(a: tBinarySearchTree; var b: tBinarySearchTree);
   procedure get_hd(a: tBinarySearchTree; var b: tBinarySearchTree);
+
   procedure clear(var a: tBinarySearchTree);
 
 implementation
@@ -43,7 +45,7 @@ begin
   is_empty := a = NIL;
 end;
 
-function in_tree(a: tBinarySearchTree; clave: integer): boolean;
+function in_tree(a: tBinarySearchTree; clave: char): boolean;
 begin
   if a = NIL then
     in_tree := FALSE
@@ -55,7 +57,7 @@ begin
     in_tree := TRUE;
 end;
 
-procedure add(var a: tBinarySearchTree; clave: integer);
+procedure add(var a: tBinarySearchTree; clave: char);
 begin
   if a = NIL then
   begin
@@ -70,7 +72,7 @@ begin
     add(a^.hi, clave);
 end;
 
-procedure remove(var a: tBinarySearchTree; x: integer);
+procedure remove(var a: tBinarySearchTree; x: char);
 var
   aux, ant: tBinarySearchTree;
 begin
@@ -106,7 +108,7 @@ end;
 
 // Traversal algorithms
 
-procedure visit(x: integer);
+procedure visit(x: char);
 begin
   writeln(x);
 end;
@@ -131,6 +133,8 @@ begin
   end;
 end;
 
+
+
 procedure postorder(a: tBinarySearchTree);
 begin
   if (a <> NIL) then
@@ -143,7 +147,7 @@ end;
 
 // Other methods
 
-function get_info(a: tBinarySearchTree): integer;
+function get_info(a: tBinarySearchTree): char;
 begin
   get_info := a^.info;
 end;

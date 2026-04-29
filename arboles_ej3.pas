@@ -9,8 +9,42 @@ var
 
 { Ejercicio 3 }
 procedure mostrar_pila_en_orden(var p: tPilaChars);
+var
+  arbol: tBinarySearchTree;
+  aux: tPilaChars;
+  i: integer;
+
 begin
-  writeln('No implementado');
+  // Inicializar el árbol
+  initialize(arbol);
+  // Inicializar la pila auxiliar
+  uPilaChar.initialize(aux);
+
+  // Agregar elementos de la pila al árbol y a la pila auxiliar
+  while not isEmpty(p) do
+  begin
+    elemento := peek(p);
+    add(arbol, elemento);
+    push(aux, elemento);
+    pop(p);
+  end;
+
+  // Mostrar los elementos en orden
+  writeln('Elementos en orden: ');
+  inorder(arbol);
+
+  // Limpiar el árbol
+  clear(arbol);
+
+  // Volver a agregar los elementos a la pila original
+  while not isEmpty(aux) do
+  begin
+    elemento := peek(aux);
+    push(p, elemento);
+    pop(aux);
+  end;
+
+  writeln('Pila original restaurada: ', toString(p));
 end;
 
 

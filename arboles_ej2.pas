@@ -10,7 +10,7 @@ var
 //              /    \
 //             5      15
 //            / \     / \
-//           3   7   14  20
+//           3   7   16  20
 procedure crear_arbol1(var a: tBinarySearchTree);
 begin
     initialize(a);
@@ -20,7 +20,7 @@ begin
     add(a, 3);
     add(a, 7);
     add(a, 20);
-    add(a, 14);
+    add(a, 16);
 end;
 
 // Crea un árbol binario de búsqueda con los siguientes valores:

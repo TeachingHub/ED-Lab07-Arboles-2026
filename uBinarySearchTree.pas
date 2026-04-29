@@ -2,10 +2,12 @@ unit uBinarySearchTree;
 
 interface
 
+{ Ejercicio 2.4: modificar los nodos para que contengan la multiplicidad de la clave. }
 type
   tBinarySearchTree = ^tnode;
   tnode = record
     info: integer;
+    multiplicidad: integer; // Number of times the key appears
     hi, hd: tBinarySearchTree;
   end;
 
@@ -24,6 +26,7 @@ type
   // Other methods
   procedure get_hi(a: tBinarySearchTree; var b: tBinarySearchTree);
   procedure get_hd(a: tBinarySearchTree; var b: tBinarySearchTree);
+
 
   // Ejercicio 2.1
   function mismos_nodos_izq_y_der(a: tBinarySearchTree): boolean;
@@ -61,21 +64,29 @@ begin
     in_tree := TRUE;
 end;
 
+{ Ejercicio 2.4: modificar el procedimiento add para que si la clave ya existe, se incremente su multiplicidad. }
 procedure add(var a: tBinarySearchTree; clave: integer);
+var
+  aux: tBinarySearchTree;
 begin
   if a = NIL then
   begin
     new(a);
     a^.info := clave;
+    a^.multiplicidad := 1; // Initialize multiplicity to 1
     a^.hi := NIL;
     a^.hd := NIL;
   end
   else if a^.info < clave then
     add(a^.hd, clave)
   else if a^.info > clave then
-    add(a^.hi, clave);
+    add(a^.hi, clave)
+  else
+    Inc(a^.multiplicidad); // Increase multiplicity if the key already exists
 end;
 
+
+{ Ejercicio 2.4: modificar el procedimiento remove para que si la clave tiene multiplicidad mayor a 1, se decremente su multiplicidad. }
 procedure remove(var a: tBinarySearchTree; x: integer);
 var
   aux, ant: tBinarySearchTree;
@@ -87,26 +98,33 @@ begin
       remove(a^.hi, x)
     else
     begin
-      aux := a;
-      if a^.hi = NIL then
-        a := a^.hd
-      else if a^.hd = NIL then
-        a := a^.hi
+      if a^.multiplicidad > 1 then
+        Dec(a^.multiplicidad) // Decrease multiplicity if greater than 1
       else
       begin
-        aux := a^.hi;
-        while aux^.hd <> NIL do
-        begin
-          ant := aux;
-          aux := aux^.hd;
-        end;
-        if a^.hi = aux then
-          a^.hi := aux^.hi
+        aux := a;
+        if a^.hi = NIL then
+          a := a^.hd
+        else if a^.hd = NIL then
+          a := a^.hi
         else
-          ant^.hd := aux^.hi;
-        a^.info := aux^.info;
+        begin
+          aux := a^.hi;
+          ant := NIL;
+          while aux^.hd <> NIL do
+          begin
+            ant := aux;
+            aux := aux^.hd;
+          end;
+          if a^.hi = aux then
+            a^.hi := aux^.hi
+          else
+            ant^.hd := aux^.hi;
+          a^.info := aux^.info;
+          a^.multiplicidad := aux^.multiplicidad;
+        end;
+        dispose(aux);
       end;
-      dispose(aux);
     end;
 end;
 
@@ -186,26 +204,87 @@ begin
   end;
 end;
 
-  // Ejercicio 2.1
-  function mismos_nodos_izq_y_der(a: tBinarySearchTree): boolean;
+
+{ Método auxiliar para contar los nodos de un árbol binario de búsqueda. }
+function node_count(a: tBinarySearchTree): integer;
+var
+  izq, der: integer;
+begin
+  if a = nil then
+    node_count := 0
+  else
   begin
-  writeln('No implementado')
+    izq := node_count(a^.hi);
+    der := node_count(a^.hd);
+    node_count := izq + der + 1;
   end;
-  // Ejercicio 2.2
-  function niveles_completos(a: tBinarySearchTree): boolean;
+end;
+
+{ Ejercicio 2.1 
+  
+   Determina si un árbol binario de búsqueda tiene la misma cantidad de nodos en su subárbol izquierdo y derecho.
+
+}
+function mismos_nodos_izq_y_der(a: tBinarySearchTree): boolean;
+var
+  izq, der: integer;
+begin
+  if a = nil then
+    mismos_nodos_izq_y_der := true
+  else
   begin
-  writeln('No implementado')
+    izq := node_count(a^.hi);
+    der := node_count(a^.hd);
+    if izq = der then
+      mismos_nodos_izq_y_der := true
+    else
+      mismos_nodos_izq_y_der := false;
   end;
-  // Ejercicio 2.3
-  procedure add_tree(var a: tBinarySearchTree; b: tBinarySearchTree);
+end;
+
+  
+  { Ejercicio 2.2 
+    
+    Determina si un árbol binario de búsqueda tiene todos sus niveles completos.
+  }
+function niveles_completos(a: tBinarySearchTree): boolean;
+begin
+  if a = nil then
+    niveles_completos := true
+  else if (a^.hi = nil) and (a^.hd = nil) then
+    niveles_completos := true
+  else if (a^.hi <> nil) and (a^.hd <> nil) then
+    niveles_completos := niveles_completos(a^.hi) and niveles_completos(a^.hd)
+  else
+    niveles_completos := false;
+end;
+
+
+{ Ejercicio 2.3 
+  Añade arbol b a a arbol a. Se empiezan a añadir los nodos de b en a siguiendo un orden preorden.
+}
+procedure add_tree(var a: tBinarySearchTree; b: tBinarySearchTree);
+begin
+  if (b <> NIL) then
   begin
-  writeln('No implementado')
+    add(a, b^.info);
+    add_tree(a, b^.hi);
+    add_tree(a, b^.hd);
   end;
-  // Ejercicio 2.4
-  function get_multiplicidad(a: tBinarySearchTree; clave: integer): integer;
-  begin
-  writeln('No implementado')
-  end;
+end;
+
+{ Ejercicio 2.4: obtener la multiplicidad de un nodo. }
+function get_multiplicidad(a: tBinarySearchTree; clave: integer): integer;
+begin
+  if a = NIL then
+    get_multiplicidad := 0
+  else if a^.info < clave then
+    get_multiplicidad := get_multiplicidad(a^.hd, clave)
+  else if a^.info > clave then
+    get_multiplicidad := get_multiplicidad(a^.hi, clave)
+  else
+    get_multiplicidad := a^.multiplicidad; // Return multiplicity of the key
+end;
 
 
 end.

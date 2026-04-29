@@ -2,10 +2,14 @@ unit uTreeMap;
 
 interface
 
+uses
+  uListaEnlazadaSimple;
+
 type
   tTreeMap = ^tnode;
   tnode = record
-    info: integer;
+    key: integer;
+    value: tListaSimple;
     hi, hd: tTreeMap;
   end;
 
@@ -22,10 +26,6 @@ type
   procedure preorder(a: tTreeMap);
   procedure postorder(a: tTreeMap);
 
-  // Other methods
-  procedure get_hi(a: tTreeMap; var b: tTreeMap);
-  procedure get_hd(a: tTreeMap; var b: tTreeMap);
-
 implementation
 
 uses
@@ -41,45 +41,67 @@ begin
   is_empty := a = NIL;
 end;
 
-function in_tree(a: tTreeMap; clave: integer): boolean;
+function contains(a: tTreeMap; key: integer): boolean;
 begin
   if a = NIL then
-    in_tree := FALSE
-  else if a^.info < clave then
-    in_tree := in_tree(a^.hd, clave)
-  else if a^.info > clave then
-    in_tree := in_tree(a^.hi, clave)
+    contains := FALSE
+  else if a^.key < key then
+    contains := contains(a^.hd, key)
+  else if a^.key > key then
+    contains := contains(a^.hi, key)
   else
-    in_tree := TRUE;
+    contains := TRUE;
 end;
 
-procedure add(var a: tTreeMap; clave: integer);
+procedure add(var a: tTreeMap; value: string);
+var
+  key: integer;
 begin
+  key := Length(value); // La clave es el número de caracteres de la palabra
   if a = NIL then
   begin
     new(a);
-    a^.info := clave;
+    a^.key := key;
     a^.hi := NIL;
     a^.hd := NIL;
+    uListaEnlazadaSimple.initialize(a^.value);
+    uListaEnlazadaSimple.insert_at_end(a^.value, value);
   end
-  else if a^.info < clave then
-    add(a^.hd, clave)
-  else if a^.info > clave then
-    add(a^.hi, clave);
+  else if a^.key < key then
+    add(a^.hd, value)
+  else if a^.key > key then
+    add(a^.hi, value)
+  else
+  begin
+    uListaEnlazadaSimple.insert_at_end(a^.value, value);
+  end;
 end;
 
-procedure remove(var a: tTreeMap; x: integer);
+procedure get(a: tTreeMap; key: integer; var value: tListaSimple);
+begin
+  if a = NIL then
+    uListaEnlazadaSimple.initialize(value) // Si no se encuentra, lista vacía
+  else if a^.key < key then
+    get(a^.hd, key, value)
+  else if a^.key > key then
+    get(a^.hi, key, value)
+  else
+    uListaEnlazadaSimple.copy(a^.value, value); // Copiar la lista si se encuentra
+end;
+
+procedure remove(var a: tTreeMap; key: integer);
 var
   aux, ant: tTreeMap;
 begin
   if a <> NIL then
-    if a^.info < x then
-      remove(a^.hd, x)
-    else if a^.info > x then
-      remove(a^.hi, x)
+    if a^.key < key then
+      remove(a^.hd, key)
+    else if a^.key > key then
+      remove(a^.hi, key)
     else
     begin
       aux := a;
+      uListaEnlazadaSimple.clear(a^.value); // Limpiar la lista antes de eliminar el nodo
       if a^.hi = NIL then
         a := a^.hd
       else if a^.hd = NIL then
@@ -96,13 +118,32 @@ begin
           a^.hi := aux^.hi
         else
           ant^.hd := aux^.hi;
-        a^.info := aux^.info;
+        a^.key := aux^.key;
+        a^.value := aux^.value; // Transferir la lista al nodo actual
       end;
       dispose(aux);
     end;
 end;
 
-// Traversal algorithms
+procedure remove_value(var a: tTreeMap; value: string);
+var
+  key: integer;
+begin
+  key := Length(value); // La clave es el número de caracteres de la palabra
+  if a <> NIL then
+  begin
+    if a^.key < key then
+      remove_value(a^.hd, value)
+    else if a^.key > key then
+      remove_value(a^.hi, value)
+    else
+    begin
+      uListaEnlazadaSimple.delete(a^.value, value); // Eliminar el valor de la lista
+      if uListaEnlazadaSimple.num_elems(a^.value) = 0 then // Si la lista queda vacía, eliminar el nodo
+        remove(a, key);
+    end;
+  end;
+end;
 
 procedure visit(x: integer);
 begin
@@ -113,7 +154,7 @@ procedure preorder(a: tTreeMap);
 begin
   if (a <> NIL) then
   begin
-    visit(a^.info);
+    visit(a^.key);
     preorder(a^.hi);
     preorder(a^.hd);
   end;
@@ -124,7 +165,7 @@ begin
   if (a <> NIL) then
   begin
     inorder(a^.hi);
-    visit(a^.info);
+    visit(a^.key);
     inorder(a^.hd);
   end;
 end;
@@ -135,16 +176,11 @@ begin
   begin
     postorder(a^.hi);
     postorder(a^.hd);
-    visit(a^.info);
+    visit(a^.key);
   end;
 end;
 
 // Other methods
-
-function get_info(a: tTreeMap): integer;
-begin
-  get_info := a^.info;
-end;
 
 procedure get_hi(a: tTreeMap; var b: tTreeMap);
 var
@@ -156,7 +192,7 @@ begin
   begin
     hi := a^.hi;
     new(b);
-    b^.info := hi^.info;
+    b^.key := hi^.key;
     b^.hi := hi^.hi;
     b^.hd := hi^.hd;
   end;
@@ -172,11 +208,10 @@ begin
   begin
     hd := a^.hd;
     new(b);
-    b^.info := hd^.info;
+    b^.key := hd^.key;
     b^.hi := hd^.hi;
     b^.hd := hd^.hd;
   end;
 end;
-
 
 end.
